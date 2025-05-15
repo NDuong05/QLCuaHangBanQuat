@@ -290,4 +290,35 @@
     .card-single{
         width: 100%!important;
     }
+
+    
+}
+
+@media only screen and (max-width: 1200px) {
+    .cards {
+        flex-wrap: wrap;
+    }
+    .card-single.warehouse {
+        width: 100%;
+        margin-top: 10px;
+    }
+}
+
+@media only screen and (max-width: 786px) {
+    .card-single.warehouse {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+
+@media only screen and (max-width: 615px) {
+    .card-single.warehouse {
+        width: 100%;
+    }
+}
+
+@media only screen and (max-width: 470px) {
+    .card-single.warehouse {
+        width: 100%!important;
+    }
 }

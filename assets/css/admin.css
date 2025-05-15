@@ -1435,3 +1435,102 @@ label a {
     margin-top: 30px;
 }
 
+/* Định dạng cho phần hiển thị số lượng sản phẩm */
+.list-quantity {
+    font-size: 14px;
+    color: #555; /* Màu chữ */
+    margin-top: 5px;
+    font-weight: 500;
+}
+
+.list-quantity span {
+    font-weight: bold;
+    color: #0c673c; /* Màu nổi bật cho số lượng */
+}
+
+.list-quantity.low-stock {
+    color: #d9534f; /* Màu đỏ khi số lượng thấp */
+}
+
+.list-quantity.out-of-stock {
+    color: #a94442; /* Màu đỏ đậm khi hết hàng */
+    font-style: italic;
+}
+
+.cards .card-single.warehouse {
+    background: linear-gradient(
+        to top right, 
+        #013220 0%, 
+        rgba(2, 106, 25, 0.2) 95%, 
+        #3d8102 99%
+    );
+    height: 300px;
+    width: 31%;
+    min-width: 290px;
+    position: relative;
+    top: 50px;
+    box-shadow: inset 5px 5px 5px rgba(0, 0, 0, 0.05),
+        inset -5px -5px 5px rgba(255, 255, 255, 0.5),
+        5px 5px 5px rgba(0, 0, 0, 0.05), -5px -5px 5px rgba(255, 255, 255, 0.5);
+    border-radius: 15px;
+    margin: 12px;
+}
+
+.cards .card-single.warehouse .box {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    align-items: center;
+    transition: 0.5s;
+    padding: 20px;
+    text-align: center;
+}
+
+.cards .card-single.warehouse:hover .box {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.cards .card-single.warehouse .box .on-box {
+    margin-top: 2rem;
+}
+
+/* .tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+} */
+
+.cards .card-single.warehouse .box h2 {
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    bottom: 20px;
+    font-size: 2rem;
+    color: var(--dark-gray);
+    transition: 0.3s;
+    pointer-events: none;
+    margin-top: 30px;
+}
+
+.cards .card-single.warehouse .box h3 {
+    text-transform: uppercase;
+    font-size: 1.5rem;
+    color: var(--dark-gray);
+    z-index: 1;
+    transition: 0.3s;
+    padding-bottom: 20px;
+}
+
+.cards .card-single.warehouse .box .on-box i {
+    font-size: 75px;
+}
+
+

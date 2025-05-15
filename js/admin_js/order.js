@@ -1,7 +1,8 @@
-
-// Format Date
 function formatDate(date) {
     let fm = new Date(date);
+    if (isNaN(fm.getTime())) {
+        return "N/A";
+    }
     let yyyy = fm.getFullYear();
     let mm = fm.getMonth() + 1;
     let dd = fm.getDate();
@@ -10,26 +11,23 @@ function formatDate(date) {
     return dd + "/" + mm + "/" + yyyy;
 }
 
-// Show order
 function showOrder(arr) {
     let orderHtml = "";
     if (arr.length == 0) {
         orderHtml = `<td colspan="6">Không có dữ liệu</td>`
     } else {
         arr.forEach((item) => {
-            let status =""
-            if(item.trangthai===false){
-                status =`<span class="status-no-complete">Chưa xử lý</span>`; 
-            }else if(item.trangthai===true){
+            let status = ""
+            if (item.trangthai === false) {
+                status = `<span class="status-no-complete">Chưa xử lý</span>`;
+            } else if (item.trangthai === true) {
                 status = `<span class="status-complete">Đã xử lý</span>`;
-
-            }else if(item.trangthai===1){
-
+            } else if (item.trangthai === 1) {
                 status = `<span class="status-complete-delivery">Đã giao</span>`
-            }else{
+            } else {
                 status = `<span class="status-complete-delivery">Đã hủy</span>`
             }
-            
+
             let date = formatDate(item.date);
             orderHtml += `
             <tr>
@@ -51,8 +49,6 @@ function showOrder(arr) {
 let orders = localStorage.getItem("hoadon") ? JSON.parse(localStorage.getItem("hoadon")) : [];
 window.onload = showOrder(orders);
 
-
-// Hàm lấy sản phẩm  trogn đơn hàng
 function getOrderDetails(madon) {
     let orderDetails = localStorage.getItem("hoadon") ?
         JSON.parse(localStorage.getItem("hoadon")) : [];
@@ -70,7 +66,6 @@ function calculateEndDate(startDate, daysToAdd) {
     endDate.setDate(endDate.getDate() + daysToAdd);
     return endDate;
 }
-
 
 function detailOrder(id) {
     document.querySelector(".modal.detail-order").classList.add("open");
@@ -124,7 +119,7 @@ function detailOrder(id) {
                 <p class="detail-order-item-b">${(order.date === "" ? "" : (formatDate(order.date) + " - ")) + formatDate(calculateEndDate(order.date, 3))}</p>
             </li>
             <li class="detail-order-item tb">
-                <span class="detail-order-item-t"><i class="fa-solid fa-location-dot"></i> Địa chỉ nhận</span>
+                <span class="detail-order-item-left"><i class="fa-solid fa-location-dot"></i> Địa chỉ nhận</span>
                 <p class="detail-order-item-b">${order.diachi}</p>
             </li>
         </ul>
@@ -133,7 +128,7 @@ function detailOrder(id) {
     document.querySelector(".modal-detail-order").innerHTML = spHtml;
 
     let classDetailBtn, textDetailBtn;
-    let showCancelBtn = true; 
+    let showCancelBtn = true;
     let showStatusBtn = true;
 
     if (order.trangthai === false) {
@@ -161,8 +156,8 @@ function detailOrder(id) {
         </div>
         <div class="modal-detail-bottom-right">
             ${showCancelBtn ? `<button class="modal-detail-btn btn-cancel" onclick="cancelOrder('${order.id}', this)">${order.trangthai === 3 ? 'Đã hủy' : 'Hủy đơn hàng'}</button>` : ''}
-            ${showStatusBtn ? `<button class="modal-detail-btn ${classDetailBtn}" onclick="changeStatus('${order.id}', this)">${textDetailBtn}</button>`: ''}
-            </div>`;
+            ${showStatusBtn ? `<button class="modal-detail-btn ${classDetailBtn}" onclick="changeStatus('${order.id}', this)">${textDetailBtn}</button>` : ''}
+        </div>`;
 }
 
 function changeStatus(id, el) {
@@ -188,20 +183,30 @@ function changeStatus(id, el) {
 
 function cancelOrder(id, el) {
     let orders = JSON.parse(localStorage.getItem("hoadon"));
+    let products = JSON.parse(localStorage.getItem("productList")) || [];
     let order = orders.find((item) => item.id == id);
 
-    if (order.trangthai !== 3) { 
-        order.trangthai = 3; 
-        el.innerHTML = "Đã hủy"; 
-        el.classList.add("btn-dahuy"); 
+    if (order.trangthai !== 3) {
+        order.trangthai = 3;
+        el.innerHTML = "Đã hủy";
+        el.classList.add("btn-dahuy");
+
+        // Hoàn lại số lượng sản phẩm vào kho
+        order.items.forEach(item => {
+            const productIndex = products.findIndex(p => p.productid == item.id);
+            if (productIndex !== -1) {
+                products[productIndex].quantity += parseInt(item.quantity);
+            }
+        });
+
+        // Cập nhật lại productList trong localStorage
+        localStorage.setItem("productList", JSON.stringify(products));
     }
 
     localStorage.setItem("hoadon", JSON.stringify(orders));
     findOrder(orders);
 }
 
-
-// Find Order
 function findOrder() {
     let tinhTrang = document.getElementById("tinh-trang").value;
     let ct = document.getElementById("form-search-order").value;
@@ -226,7 +231,6 @@ function findOrder() {
         item.user.username.toLowerCase().includes(ct.toLowerCase()) || item.id.toString().toLowerCase().includes(ct.toLowerCase())
     );
 
- 
     if (timeStart !== "" && timeEnd === "") {
         result = result.filter((item) => new Date(item.date) >= new Date(timeStart).setHours(0, 0, 0));
     } else if (timeStart === "" && timeEnd !== "") {
@@ -241,10 +245,7 @@ function findOrder() {
     showOrder(result);
 }
 
-
-
-
-function cancelSearchOrder(){
+function cancelSearchOrder() {
     let orders = localStorage.getItem("hoadon") ? JSON.parse(localStorage.getItem("hoadon")) : [];
     document.getElementById("tinh-trang").value = 2;
     document.getElementById("form-search-order").value = "";

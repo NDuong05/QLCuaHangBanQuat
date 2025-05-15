@@ -28,7 +28,7 @@
                 </form>
             </div>
         </div>
-    </div>    
+    </div>
     <div id="admin-container" style="display: none;">
         <header class="header">
             <button class="menu-icon-btn">
@@ -72,6 +72,12 @@
                             <a href="#" class="sidebar-link">
                                 <div class="sidebar-icon"><i class="fa-solid fa-square-poll-vertical"></i></div>
                                 <div class="hidden-sidebar">Thống kê</div>
+                            </a>
+                        </li>
+                        <li class="sidebar-list-item tab-content">
+                            <a href="#" class="sidebar-link">
+                                <div class="sidebar-icon"><i class="fa-solid fa-gear"></i></div>
+                                <div class="hidden-sidebar">Quản lí kho</div>
                             </a>
                         </li>
                     </ul>
@@ -420,6 +426,130 @@
                         </table>
                     </div>
                 </div>
+
+                <div class="section">
+                    <div class="admin-control">
+                        <div class="admin-control-left">
+                            <button class="btn-control-large tab-link active" id="duong1">Nhập kho</button>
+                            <button class="btn-control-large tab-link" id="duong2">Xuất kho</button>
+                            <button class="btn-control-large tab-link" id="duong3">Sản phẩm trong kho</button>
+                        </div>
+                        <div class="admin-control-center">
+                            <form action="" class="form-search">
+                                <span class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></span>
+                                <input id="form-search-warehouse" type="text" class="form-search-input"
+                                    placeholder="Tìm kiếm sản phẩm trong kho..." oninput="searchWarehouseProducts()">
+                            </form>
+                        </div>
+                        <div class="admin-control-right">
+                            <button class="btn-control-large" onclick="refreshWarehouse()"><i
+                                    class="fa-solid fa-arrow-rotate-right"></i> Làm mới</button>
+                        </div>
+                    </div>
+                    <div id="import-kho" class="tab-content active" style="display: block;">
+                        <h3>Phiếu nhập kho</h3>
+                        <form id="import-form" class="warehouse-form">
+                            <div class="form-group">
+                                <label for="import-product" class="form-label">Sản phẩm</label>
+                                <select id="import-product" name="import-product" required>
+                                    <option value="" disabled selected>Chọn sản phẩm</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="import-quantity" class="form-label">Số lượng nhập</label>
+                                <input type="number" id="import-quantity" name="import-quantity" min="1" required
+                                    class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="import-price" class="form-label">Giá nhập (VND)</label>
+                                <input type="number" id="import-price" name="import-price" min="0" required
+                                    class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="supplier-search" class="form-label">Nhà cung cấp</label>
+                                <input type="text" id="supplier-search" name="supplier-search"
+                                    placeholder="Tìm nhà cung cấp..." oninput="searchSupplier()" class="form-control">
+                            </div>
+                            <button type="submit" class="form-submit">Lập phiếu nhập</button>
+                        </form>
+                        <div class="history">
+                            <h3>Lịch sử nhập kho</h3>
+                            <div class="table">
+                                <table width="100%">
+                                    <thead>
+                                        <tr>
+                                            <td>Ngày nhập</td>
+                                            <td>Sản phẩm</td>
+                                            <td>Số lượng</td>
+                                            <td>Giá nhập</td>
+                                            <td>Nhà cung cấp</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="import-history">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="export-kho" class="tab-content" style="display: none;">
+                        <!-- <h3>Phiếu xuất kho</h3>
+                        <form id="export-form" class="warehouse-form">
+                            <div class="form-group">
+                                <label for="export-product" class="form-label">Sản phẩm</label>
+                                <select id="export-product" name="export-product" required>
+                                    <option value="" disabled selected>Chọn sản phẩm</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="export-quantity" class="form-label">Số lượng xuất</label>
+                                <input type="number" id="export-quantity" name="export-quantity" min="1" required class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="export-price" class="form-label">Giá xuất (VND)</label>
+                                <input type="number" id="export-price" name="export-price" min="0" required class="form-control">
+                            </div>
+                            <button type="submit" class="form-submit">Lập phiếu xuất</button>
+                        </form> -->
+                        <table id="table-xuatkho">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Mã đơn</th>
+                                    <th>Mã SP</th>
+                                    <th>Tên SP</th>
+                                    <th>Số lượng</th>
+                                    <th>Đơn giá</th>
+                                    <th>Thành tiền</th>
+                                    <th>Ngày xuất</th>
+                                    <th>Khách hàng</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-xuatkho-body"></tbody>
+                        </table>
+
+                    </div>
+                    <div id="warehouse-products" class="tab-content" style="display: none;">
+                        <h3>Sản phẩm trong kho</h3>
+                        <div class="table">
+                            <table width="100%">
+                                <thead>
+                                    <tr>
+                                        <td>Tên sản phẩm</td>
+                                        <td>Loại</td>
+                                        <td>Giá bán</td>
+                                        <td>Công suất</td>
+                                        <td>Hãng</td>
+                                        <td>Xuất xứ</td>
+                                        <td>Năm sản xuất</td>
+                                        <td>Số lượng tồn</td>
+                                    </tr>
+                                </thead>
+                                <tbody id="warehouse-product-list">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </main>
         </div>
 
@@ -429,7 +559,7 @@
                 <h3 class="modal-container-title edit-product-e">CHỈNH SỬA SẢN PHẨM</h3>
                 <button class="modal-close product-form"><i class="fa-solid fa-xmark"></i></button>
                 <div class="modal-content">
-                    <form action="" class="add-product-form">
+                    <form id="add-product-form">
                         <div class="modal-content-left">
                             <img src=""
                                 alt="/assets/img/art-reminds-me-slightly-of-valak-which-is-a-demon-taking-v0-lji9r67izj5c1.jpg"
@@ -495,6 +625,12 @@
                             <div class="form-group">
                                 <label for="year" class="form-label">Năm sản xuất</label>
                                 <input id="year" name="year" type="text" placeholder="Năm sản xuất"
+                                    class="form-control">
+                                <span class="form-message"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="so-luong" class="form-label">Số lượng</label>
+                                <input id="so-luong" name="so-luong" type="number" placeholder="Số lượng" min="0"
                                     class="form-control">
                                 <span class="form-message"></span>
                             </div>
@@ -624,9 +760,12 @@
     <script src="./js/admin_js/user.js"></script>
     <script src="./js/admin_js/order.js"></script>
     <script src="./js/admin_js/thongke.js"></script>
+    <script src="./js/admin_js/qlKho.js"></script>
     <script src="./js/admin_js/toast-message.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
     <script src="./js/admin_js/location_choosing.js"></script>
 </body>
+
+
 
 </html>

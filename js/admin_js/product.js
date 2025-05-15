@@ -1,4 +1,3 @@
-
 let perPage = 10;
 let currentPage = 1;
 let totalPage = 0;
@@ -58,6 +57,13 @@ function showProductArr(arr) {
         productHtml = `<div class="no-result"><div class="no-result-i"><i class="fa-solid fa-face-sad-cry"></i></div><div class="no-result-h">Không có sản phẩm để hiển thị</div></div>`;
     } else {
         arr.forEach(product => {
+            let quantityClass = "";
+            if (product.quantity === 0) {
+                quantityClass = "out-of-stock"; // Hết hàng
+            } else if (product.quantity <= 5) {
+                quantityClass = "low-stock"; // Số lượng thấp
+            }
+
             let btnCtl = product.status === 1
                 ? `<button class="btn-delete" data-id="${product.productid}" data-action="delete"><i class="fa-solid fa-trash"></i></button>`
                 : `<button class="btn-delete" data-id="${product.productid}" data-action="restore"><i class="fa-solid fa-eye"></i></button>`;
@@ -68,6 +74,7 @@ function showProductArr(arr) {
                         <div class="list-info">
                             <h4>${product.name}</h4>
                             <span class="list-category">${product.category}</span>
+                            <p class="list-quantity ${quantityClass}">Số lượng: <span>${product.quantity}</span></p> <!-- Hiển thị số lượng -->
                         </div>
                     </div>
                     <div class="list-center">
@@ -183,12 +190,14 @@ function addProduct() {
             categoryText = 'quatlung';
             break;
     }
+
     let newProduct = {
         productid: createId(products),
         name: document.getElementById("ten-sanPham").value,
         img: document.querySelector(".upload-image-preview").src,
         category: categoryText,
         price: parseInt(document.getElementById("gia-moi").value),
+        quantity: parseInt(document.getElementById("so-luong").value), // Thêm số lượng
         madein: document.getElementById("madeIn").value,
         power: document.getElementById("power").value,
         size: document.getElementById("size").value,
@@ -197,11 +206,10 @@ function addProduct() {
         status: 1
     };
 
-    
     if (
         newProduct.name && newProduct.img && newProduct.category &&
-        newProduct.price && newProduct.madein && newProduct.power &&
-        newProduct.size && newProduct.brandid && newProduct.year
+        newProduct.price && newProduct.quantity >= 0 && newProduct.madein &&
+        newProduct.power && newProduct.size && newProduct.brandid && newProduct.year
     ) {
         products.push(newProduct);
         localStorage.setItem("productList", JSON.stringify(products));
@@ -257,11 +265,10 @@ function changeStatusProduct(id) {
 
 var indexCur;
 function editProduct(id) {
-    let products = localStorage.getItem("productList") ? JSON.parse(localStorage.getItem("productList")) : [];
-    let index = products.findIndex(item => {
-        return item.productid == id;
-    });
+    let products = JSON.parse(localStorage.getItem("productList")) || [];
+    let index = products.findIndex(item => item.productid == id);
     indexCur = index;
+
     document.querySelectorAll(".add-product-e").forEach(item => {
         item.style.display = "none";
     });
@@ -274,6 +281,7 @@ function editProduct(id) {
     document.querySelector(".upload-image-preview").src = products[index].img;
     document.getElementById("ten-sanPham").value = products[index].name;
     document.getElementById("gia-moi").value = products[index].price;
+    document.getElementById("so-luong").value = products[index].quantity; // Hiển thị số lượng
     document.getElementById("chon-sanPham").value = products[index].category;
     document.getElementById("size").value = products[index].size;
     document.getElementById("power").value = products[index].power;

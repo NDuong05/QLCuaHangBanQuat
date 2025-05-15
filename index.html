@@ -523,7 +523,6 @@
                 <p><b>Giá: </b>${productPrice.toLocaleString('vi-VN')} VNĐ</p>          
                 <p><b>Bảo hành: </b> 12 tháng</p>
                 <p><b>Hãng: </b>${brandId}</p> <!-- Loại bỏ nút xem thông tin hãng -->
-                <p><b>Số lượng</b></p>
                 <div class="count-box">
                     <button class="minus">-</button>
                     <input type="text" class="num">
@@ -643,28 +642,33 @@
         let currentPage = 1;
 
         function pageContent(pagenum, Array, numOfProducts) {
-            const containerItems = document.getElementById("container-items");
-            const startIndex = (pagenum - 1) * numOfProducts;
-            const endIndex = startIndex + numOfProducts;
+    const containerItems = document.getElementById("container-items");
+    const startIndex = (pagenum - 1) * numOfProducts;
+    const endIndex = startIndex + numOfProducts;
 
-            let s = "";
-            for (let i = startIndex; i < endIndex && i < Array.length; i++) {
-                // Kiểm tra nếu sản phẩm có status = 1 thì mới hiển thị
-                if (Array[i].status === 1) {
-                    s += `
-                        <div class="item">
-                            <img src="${Array[i].img}" alt="${Array[i].name}">
-                            <div class="wrap-product-content">
-                                <p>${Array[i].name}</p>
-                                <p>${(Array[i].price).toLocaleString('vi-VN')} VNĐ</p>
-                            </div>
-                            <button class="detail">Chi tiết</button>
-                        </div>`;
-                }
-            }
-            containerItems.innerHTML = s;
-            displayProductDetailTable();
+    let s = "";
+    for (let i = startIndex; i < endIndex && i < Array.length; i++) {
+        // Kiểm tra nếu sản phẩm có status = 1 thì mới hiển thị
+        if (Array[i].status === 1) {
+            const quantityText = Array[i].quantity > 0 
+                ? `Còn lại: ${Array[i].quantity}` 
+                : `<span style="color: red;">Hết hàng</span>`; // Hiển thị "Hết hàng" nếu số lượng = 0
+
+            s += `
+                <div class="item">
+                    <img src="${Array[i].img}" alt="${Array[i].name}">
+                    <div class="wrap-product-content">
+                        <p>${Array[i].name}</p>
+                        <p>${(Array[i].price).toLocaleString('vi-VN')} VNĐ</p>
+                        <p>${quantityText}</p> <!-- Hiển thị số lượng -->
+                    </div>
+                    <button class="detail">Chi tiết</button>
+                </div>`;
         }
+    }
+    containerItems.innerHTML = s;
+    displayProductDetailTable();
+}
 
 
         function pageUp() {
